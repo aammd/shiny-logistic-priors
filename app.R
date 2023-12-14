@@ -34,13 +34,9 @@ mod_modal_interactive_ui <- function(id){
       "What does a given prior mean? One great way to interpret a prior is via simulation. 
       To do this, first simulate values from the prior, then use those values to simulate observations. Here you can explore the effect of the prior on the intercept of a simple logistic regression."
     ),
-    helpText('$$
-       \\begin{align}
-       Y & \\sim \\text{Binomial}(20, p) \\\\
-       \\text{logit}(p) &= \\alpha \\\\
-       \\alpha & \\sim \\text{Normal}(0, 5) \\\\
-       \\end{align}
-       $$'),
+    fluidRow(
+      uiOutput(ns('formula'))
+    ),
     fluidRow(
       column(2,
              numericInput(ns("num"), "sample size", min = 1, max = 500, 
@@ -92,6 +88,18 @@ mod_modal_interactive_server <- function(id){
         labs(title = "Prior predictions") + 
         coord_cartesian(xlim = c(0,20))
     })
+    
+    output$formula <- renderUI({withMathJax(paste0('$$
+       \\begin{align}
+       Y & \\sim \\text{Binomial}(20, p) \\\\
+       \\text{logit}(p) &= \\alpha \\\\
+       \\alpha & \\sim \\text{Normal}(',
+       input$mean,
+       ', ',
+       input$sd, 
+       ') \\\\
+       \\end{align}
+       $$'))})
     
   })
 }
